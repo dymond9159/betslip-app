@@ -3,7 +3,7 @@ import { StyleSheet, ScrollView } from "react-native";
 import { Container } from "@/components";
 import { ThemedText } from "@/components";
 
-export default function HomeScreen() {
+export default function FeaturedScreen() {
   return (
     <Container>
       <ScrollView
