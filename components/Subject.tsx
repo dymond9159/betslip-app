@@ -1,0 +1,35 @@
+import { StyleSheet } from "react-native";
+
+import { ThemedText } from "./ThemedText";
+import { ThemedView } from "./ThemedView";
+import { FlexView } from "./FlexView";
+
+interface SubjectProps {
+  title?: string;
+  size?: number;
+}
+
+export const Subject = ({ title, size = 4 }: SubjectProps) => {
+  return (
+    <FlexView gap={8}>
+      <ThemedView
+        style={[styles.ul, { width: size, height: size, padding: size }]}
+      ></ThemedView>
+      <ThemedText style={styles.text}>{title}</ThemedText>
+    </FlexView>
+  );
+};
+
+const styles = StyleSheet.create({
+  ul: {
+    borderRadius: 50,
+    backgroundColor: "#F02E31",
+    borderWidth: 5,
+    borderColor: "#48191d",
+  },
+  text: {
+    fontSize: 14,
+    fontWeight: 700,
+    lineHeight: 17,
+  },
+});
