@@ -1,4 +1,4 @@
-import { Dimensions, StyleSheet } from "react-native";
+import { Dimensions, ImageSourcePropType, StyleSheet } from "react-native";
 
 import { ThemedText } from "../ThemedText";
 import { ThemedView } from "../ThemedView";
@@ -10,6 +10,14 @@ import { Button, Notification, RadioButton, RadioItem } from "../ui";
 import { FlexView } from "../FlexView";
 import { SingleBetSlipView } from "./SingleBetSlipView";
 import { ParlayBetSlipView } from "./ParlayBetSlipView";
+
+export type BetSlipDataType = {
+  challengeTitle: string;
+  teamName: string;
+  brand: ImageSourcePropType | undefined;
+  value1: string;
+  value2: string;
+};
 
 interface OpenBetSlipViewProps {
   onPress?: () => void;
@@ -42,7 +50,7 @@ export const OpenBetSlipView = ({}: OpenBetSlipViewProps) => {
     <ThemedView style={[styles.betSlipContainer, { width: dm.width }]}>
       <ThemedText style={styles.headerTitle}>betslip (2)</ThemedText>
       <TabView routes={routes} />
-      <Wrapper>
+      <Wrapper style={{ paddingTop: 0 }}>
         <RadioButton type="button" onChange={() => {}}>
           {BET_AMOUNTS.map((item, index) => (
             <RadioItem key={index} label={item.label} value={item.value} />
@@ -67,7 +75,13 @@ export const OpenBetSlipView = ({}: OpenBetSlipViewProps) => {
           onAccept={() => console.log("Accepted")}
         />
         <ThemedView style={{ paddingVertical: 8 }}>
-          <Button title="confirm bet" bgColor="#FFE100" color="#53470C" />
+          <Button
+            title="confirm bet"
+            bgColor="#FFE100"
+            fontSize={16}
+            color="#53470C"
+            paddingVertical={16}
+          />
         </ThemedView>
         <ThemedText style={styles.labelText}>
           Max bet amount: 1.000.000

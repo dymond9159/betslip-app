@@ -1,12 +1,12 @@
 import { TouchableOpacity, StyleSheet, Image } from "react-native";
 import { BoardView } from "../BoardView";
 import { FlexView } from "../FlexView";
-import { BetSlipDataType } from "./TeamBetSlipView";
 import { TrashIcon } from "../icons";
 import { Wrapper } from "../Wrapper";
 import { ThemedView } from "../ThemedView";
 import { ThemedText } from "../ThemedText";
 import { Input } from "../ui";
+import { BetSlipDataType } from "./OpenBetSlipView";
 
 interface SingleBetSlipViewProps {
   data?: BetSlipDataType[];
@@ -93,7 +93,7 @@ const styles = StyleSheet.create({
   },
   normalText: {
     fontSize: 16,
-    fontWeight: 500,
+    fontWeight: 400,
   },
   boldText: {
     fontSize: 16,

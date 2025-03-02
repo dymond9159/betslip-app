@@ -1,12 +1,12 @@
 import { TouchableOpacity, StyleSheet, Image } from "react-native";
 import { BoardView } from "../BoardView";
 import { FlexView } from "../FlexView";
-import { BetSlipDataType } from "./TeamBetSlipView";
 import { TrashIcon } from "../icons";
 import { Wrapper } from "../Wrapper";
 import { ThemedView } from "../ThemedView";
 import { ThemedText } from "../ThemedText";
 import { Input } from "../ui";
+import { BetSlipDataType } from "./OpenBetSlipView";
 
 interface ParlayBetSlipViewViewProps {
   data?: BetSlipDataType[];
@@ -31,13 +31,13 @@ export const ParlayBetSlipView = ({
         </TouchableOpacity>
         <Wrapper style={styles.fullWidth}>
           <FlexView direction="column" gap={8}>
-            <ThemedView style={styles.fullWidth}>
+            <ThemedView style={[styles.fullWidth, { marginBottom: 5 }]}>
               <FlexView justifyContent="space-between">
                 <ThemedView>
                   <ThemedText style={styles.normalText}>
                     {`${data?.length} Pick Parlay`}
                   </ThemedText>
-                  <ThemedText style={styles.grayText}>
+                  <ThemedText style={[styles.grayText, { marginTop: 5 }]}>
                     Ends at: 8:00 PM EST
                   </ThemedText>
                 </ThemedView>
