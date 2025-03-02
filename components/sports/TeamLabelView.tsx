@@ -1,8 +1,8 @@
 import React from "react";
 import { StyleSheet, Image, ImageSourcePropType } from "react-native";
-import { ThemedView } from "./ThemedView";
-import { ThemedText } from "./ThemedText";
-import { AvatarType } from "./ui";
+import { ThemedView } from "../ThemedView";
+import { ThemedText } from "../ThemedText";
+import { AvatarType } from "../ui";
 import { BettingOption } from "./BettingBoardView";
 
 export type TeamData = {
@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     width: 137,
-    height: 64,
+    height: 60,
     flexDirection: "row",
     alignItems: "center",
     overflow: "hidden",
@@ -48,7 +48,7 @@ const styles = StyleSheet.create({
   },
   imageWrapper: {
     width: 48,
-    height: 64,
+    height: 60,
     marginRight: 10,
     overflow: "hidden", // Ensures the image fits within the radius
   },

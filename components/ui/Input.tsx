@@ -5,14 +5,25 @@ import { ThemedView } from "../ThemedView";
 interface InputProps extends TextInputProps {
   icon?: React.ReactElement;
   radius?: number;
+  width?: number;
+  height?: number;
 }
 
-export const Input = ({ icon, radius = 10, style, ...props }: InputProps) => {
+export const Input = ({
+  icon,
+  radius = 4,
+  width,
+  height = 40,
+  style,
+  ...props
+}: InputProps) => {
   return (
-    <ThemedView style={[styles.container, { borderRadius: radius }]}>
+    <ThemedView
+      style={[styles.container, { width, height, borderRadius: radius }]}
+    >
       {icon && <ThemedView style={styles.iconContainer}>{icon}</ThemedView>}
       <TextInput
-        style={[styles.input, style]}
+        style={[styles.input, style, { width, height }]}
         placeholderTextColor="#FFFFFF60"
         {...props}
       />
@@ -37,12 +48,9 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    height: 40,
     fontSize: 16,
     lineHeight: 18,
     color: "#FFF",
-    outline: "none",
     borderWidth: 0,
-    outlineColor: "transparent",
   },
 });

@@ -1,16 +1,31 @@
-import { useState } from "react";
+import { useCallback, useRef } from "react";
+import { useNavigation } from "expo-router";
 import { StyleSheet, ScrollView } from "react-native";
+import { BottomSheetModal as BottomSheetModalBase } from "@gorhom/bottom-sheet";
 
-import { ChallengeView, Container, StackView, Wrapper } from "@/components";
-import { ChevronRightIcon, LogoIcon, SearchIcon } from "@/components/icons";
-import { LinearGradient } from "expo-linear-gradient";
-import { Button, Input, Subject, Switch } from "@/components/ui";
+import { BottomSheetModal, Container, BoardView, Wrapper } from "@/components";
+import {
+  ChallengeView,
+  CurrencyToggleView,
+  OpenBetSlipView,
+} from "@/components/sports";
+import { Button, Divider, Input, SubjectView } from "@/components/ui";
 import { ThemedView, ThemedText, Category, FlexView, Card } from "@/components";
-import { CATEGORIES, MATCHES, TABLES } from "../utils/mokup-data";
-import Divider from "@/components/ui/Divider";
+import { CATEGORIES, MATCHES, TABLES } from "../../utils/mockup-data";
+import { ChevronRightIcon, SearchIcon } from "@/components/icons";
 
 export default function HomeScreen() {
-  const [isStimiCurrency, toggleStimiCurrency] = useState(false);
+  const bottomSheetModalRef = useRef<BottomSheetModalBase>(null);
+  const navigation = useNavigation();
+
+  const handleOpenModal = useCallback(() => {
+    bottomSheetModalRef.current?.present();
+    navigation.setOptions({ tabBarStyle: { display: "none" } });
+  }, []);
+
+  const handleCloseModal = useCallback(() => {
+    navigation.setOptions({ tabBarStyle: { display: "block", height: 60 } });
+  }, []);
 
   return (
     <Container>
@@ -19,21 +34,8 @@ export default function HomeScreen() {
         showsHorizontalScrollIndicator={false}
         style={styles.scrollView}
       >
-        <LinearGradient
-          colors={["#F02E9530", "#F02E9500"]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 0 }}
-          style={styles.stimiCurrencyToggle}
-        >
-          <Wrapper style={styles.flexBar}>
-            <ThemedView style={styles.logoBox}>
-              <LogoIcon />
-            </ThemedView>
-            <ThemedText style={styles.amountText}>12,000,000</ThemedText>
-            <Switch value={isStimiCurrency} onChange={toggleStimiCurrency} />
-          </Wrapper>
-        </LinearGradient>
-        <Wrapper style={styles.flexBar}>
+        <CurrencyToggleView />
+        <Wrapper>
           <Input
             icon={<SearchIcon />}
             placeholder="Search..."
@@ -59,7 +61,7 @@ export default function HomeScreen() {
         <Wrapper>
           <FlexView direction="row" justifyContent="space-between">
             <ThemedView>
-              <Subject title="Live sports" />
+              <SubjectView title="Live sports" />
             </ThemedView>
             <ThemedText>View all</ThemedText>
           </FlexView>
@@ -82,73 +84,66 @@ export default function HomeScreen() {
           </ScrollView>
         </Wrapper>
         <Wrapper>
-          <StackView>
+          <BoardView>
             <Wrapper style={{ marginBottom: 10 }}>
               <FlexView justifyContent="space-between">
                 <ThemedText>NBA</ThemedText>
                 <Button
-                  title="Popular"
+                  title="popular"
                   bgColor="#FFE100"
                   color="#53470C"
                   paddingHorizontal={8}
                   paddingVertical={6}
+                  fontSize={12}
                 />
               </FlexView>
             </Wrapper>
             {TABLES.map((table, index) => (
-              <>
+              <ThemedView key={index} style={{ width: "100%" }}>
                 {index !== 0 && <Divider />}
-                <Wrapper key={index}>
+                <Wrapper>
                   <ChallengeView isFirst={index === 0} data={table} />
                 </Wrapper>
-              </>
+              </ThemedView>
             ))}
-          </StackView>
+          </BoardView>
         </Wrapper>
       </ScrollView>
+      <ThemedView style={styles.overlayButton}>
+        <Wrapper>
+          <Button
+            title="open bet slip"
+            bgColor="#FFE100"
+            color="#53470C"
+            fontSize={16}
+            style={styles.buttonShadow}
+            onPress={() => handleOpenModal()}
+          ></Button>
+        </Wrapper>
+      </ThemedView>
+      <BottomSheetModal ref={bottomSheetModalRef} onClose={handleCloseModal}>
+        <OpenBetSlipView />
+      </BottomSheetModal>
     </Container>
   );
 }
 
 const styles = StyleSheet.create({
-  stimiCurrencyToggle: {
-    width: "100%",
-    height: 60,
-  },
-  flexBar: {
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  logoBox: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    width: 30,
-    height: 30,
-    padding: 4,
-    borderRadius: 50,
-    borderWidth: 3,
-    borderColor: "#BF2678",
-    backgroundColor: "#F02E95",
-    elevation: 10,
-    shadowColor: "#F02E9566",
-    shadowOffset: { width: 1, height: 2 },
-    shadowOpacity: 1,
-    shadowRadius: 0,
-    color: "white",
-  },
-  amountText: {
-    flex: 1,
-    marginLeft: 8,
-    fontFamily: "Joyride",
-    fontWeight: 400,
-    fontSize: 24,
-    lineHeight: 28.63,
-    letterSpacing: 0,
-  },
   scrollView: {
     gap: 20,
+  },
+  overlayButton: {
+    width: "100%",
+    position: "sticky",
+    bottom: 0,
+  },
+  buttonShadow: {
+    shadowColor: "#FFE10033",
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.8,
+    shadowRadius: 16,
+
+    // Android Shadow
+    elevation: 5,
   },
 });

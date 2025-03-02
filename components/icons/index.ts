@@ -9,3 +9,4 @@ export * from "./FeatureIcon";
 export * from "./BetsIcon";
 export * from "./SocialIcon";
 export * from "./RewardIcon";
+export * from "./TrashIcon";

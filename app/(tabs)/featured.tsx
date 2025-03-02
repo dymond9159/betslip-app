@@ -1,24 +1,7 @@
-import { StyleSheet, ScrollView } from "react-native";
-
-import { Container } from "@/components";
-import { ThemedText } from "@/components";
+import { StyleSheet } from "react-native";
 
 export default function FeaturedScreen() {
-  return (
-    <Container>
-      <ScrollView
-        horizontal={false}
-        showsHorizontalScrollIndicator={false}
-        style={styles.scrollView}
-      >
-        <ThemedText>Featured screen</ThemedText>
-      </ScrollView>
-    </Container>
-  );
+  return <></>;
 }
 
-const styles = StyleSheet.create({
-  scrollView: {
-    gap: 20,
-  },
-});
+const styles = StyleSheet.create({});

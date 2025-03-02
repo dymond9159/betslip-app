@@ -2,7 +2,7 @@
  * * Mockup data
  */
 
-import { ChallengeData } from "@/components";
+import { BetSlipDataType, ChallengeData } from "@/components/sports";
 
 export const CATEGORIES = [
   { image: require("@assets/images/categories/c_NBA.png"), title: "NBA" },
@@ -100,8 +100,8 @@ export const TABLES: ChallengeData[] = [
       teamName: "Kings",
       brand: require("@assets/images/teams/Kings.png"),
       bettingData: [
-        { label: "Moneyline", value1: -110 },
-        { label: "Spread", value1: -110, value2: -3.5 },
+        { label: "Moneyline", value1: +140 },
+        { label: "Spread", value1: -110, value2: +3.5 },
         { label: "Total", value1: -110, value2: 234.5 },
       ],
     },
@@ -129,8 +129,8 @@ export const TABLES: ChallengeData[] = [
       teamName: "Raptors",
       brand: require("@assets/images/teams/Raptors.png"),
       bettingData: [
-        { label: "Moneyline", value1: -110 },
-        { label: "Spread", value1: -110, value2: -3.5 },
+        { label: "Moneyline", value1: +140 },
+        { label: "Spread", value1: -110, value2: +3.5 },
         { label: "Total", value1: -110, value2: 234.5 },
       ],
     },
@@ -157,8 +157,8 @@ export const TABLES: ChallengeData[] = [
       teamName: "Pelicans",
       brand: require("@assets/images/teams/Pelicans.png"),
       bettingData: [
-        { label: "Moneyline", value1: -110 },
-        { label: "Spread", value1: -110, value2: -3.5 },
+        { label: "Moneyline", value1: +140 },
+        { label: "Spread", value1: -110, value2: +3.5 },
         { label: "Total", value1: -110, value2: 234.5 },
       ],
     },
@@ -173,5 +173,22 @@ export const TABLES: ChallengeData[] = [
       { username: "John" },
       { username: "John" },
     ],
+  },
+];
+
+export const BET_DATA: BetSlipDataType[] = [
+  {
+    challengeTitle: "Warriors vs Bucks",
+    teamName: "Warriors",
+    brand: require("@assets/images/teams/Warriors.png"),
+    value1: "-120",
+    value2: "-3.5",
+  },
+  {
+    challengeTitle: "Hornets vs Kings",
+    teamName: "Kings",
+    brand: require("@assets/images/teams/Kings.png"),
+    value1: "+140",
+    value2: "Moneyline",
   },
 ];

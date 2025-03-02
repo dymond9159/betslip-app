@@ -7,7 +7,7 @@ interface DividerProps {
   marginVertical?: number;
 }
 
-const Divider = ({
+export const Divider = ({
   color = "#30353D",
   thickness = 1,
   marginVertical = 0,
@@ -27,5 +27,3 @@ const styles = StyleSheet.create({
     width: "100%",
   },
 });
-
-export default Divider;

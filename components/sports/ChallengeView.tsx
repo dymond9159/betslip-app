@@ -1,11 +1,11 @@
 import { StyleSheet } from "react-native";
 
-import { FlexView } from "./FlexView";
+import { FlexView } from "../FlexView";
 import TeamLabelView, { ChallengeData } from "./TeamLabelView";
-import { ThemedView } from "./ThemedView";
+import { ThemedView } from "../ThemedView";
 import { BettingBoardView, BettingOption } from "./BettingBoardView";
-import GroupAvatar from "./ui/GroupAvatar";
-import { ThemedText } from "./ThemedText";
+import GroupAvatar from "../ui/GroupAvatar";
+import { ThemedText } from "../ThemedText";
 
 interface ChallengeViewProps {
   isFirst: boolean;

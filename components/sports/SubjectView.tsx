@@ -1,15 +1,15 @@
 import { StyleSheet } from "react-native";
 
-import { ThemedText } from "./ThemedText";
-import { ThemedView } from "./ThemedView";
-import { FlexView } from "./FlexView";
+import { ThemedText } from "../ThemedText";
+import { ThemedView } from "../ThemedView";
+import { FlexView } from "../FlexView";
 
-interface SubjectProps {
+interface SubjectViewProps {
   title?: string;
   size?: number;
 }
 
-export const Subject = ({ title, size = 4 }: SubjectProps) => {
+export const SubjectView = ({ title, size = 4 }: SubjectViewProps) => {
   return (
     <FlexView gap={8}>
       <ThemedView

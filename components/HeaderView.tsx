@@ -14,7 +14,7 @@ export default function HeaderView() {
     <ThemedView style={styles.header}>
       <Wrapper>
         <FlexView justifyContent="space-between">
-          <ThemedText style={styles.textLogo}>SPORTS</ThemedText>
+          <ThemedText style={styles.textLogo}>sports</ThemedText>
           <ThemedView>
             <FlexView gap={8}>
               <Button title="" icon={<NotificationIcon />} />
@@ -34,6 +34,7 @@ const styles = StyleSheet.create({
     height: HEADER_HEIGHT,
     overflow: "hidden",
     color: "white",
+    backgroundColor: "#101216",
   },
   textLogo: {
     flex: 1,
