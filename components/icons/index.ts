@@ -10,3 +10,7 @@ export * from "./BetsIcon";
 export * from "./SocialIcon";
 export * from "./RewardIcon";
 export * from "./TrashIcon";
+export * from "./FourStartIcon";
+export * from "./LoadingIcon";
+export * from "./CheckIcon";
+export * from "./DollarIcon";

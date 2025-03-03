@@ -1,5 +1,5 @@
 import React from "react";
-import { View, TextInput, StyleSheet, TextInputProps } from "react-native";
+import { TextInput, StyleSheet, TextInputProps } from "react-native";
 import { ThemedView } from "../ThemedView";
 
 interface InputProps extends TextInputProps {
@@ -23,8 +23,10 @@ export const Input = ({
     >
       {icon && <ThemedView style={styles.iconContainer}>{icon}</ThemedView>}
       <TextInput
-        style={[styles.input, style, { width, height }]}
+        style={[styles.input, style, { width, height, outline: "none" }]}
         placeholderTextColor="#FFFFFF60"
+        underlineColorAndroid="transparent"
+        textAlign="center"
         {...props}
       />
     </ThemedView>

@@ -1,15 +1,24 @@
+import { useEffect, useState } from "react";
 import { Dimensions, ImageSourcePropType, StyleSheet } from "react-native";
 
+import {
+  Button,
+  ButtonProps,
+  CircleLogo,
+  Notification,
+  NotificationProps,
+  RadioButton,
+  RadioItem,
+} from "../ui";
 import { ThemedText } from "../ThemedText";
 import { ThemedView } from "../ThemedView";
-import { CurrencyToggleView } from "./CurrencyToggleView";
 import { TabView } from "../TabView";
 import { Wrapper } from "../Wrapper";
-import { BET_DATA } from "@/utils/mockup-data";
-import { Button, Notification, RadioButton, RadioItem } from "../ui";
 import { FlexView } from "../FlexView";
+import { CurrencyToggleView } from "./CurrencyToggleView";
 import { SingleBetSlipView } from "./SingleBetSlipView";
 import { ParlayBetSlipView } from "./ParlayBetSlipView";
+import { CheckIcon, DollarIcon, FourStartIcon } from "../icons";
 
 export type BetSlipDataType = {
   challengeTitle: string;
@@ -20,38 +29,137 @@ export type BetSlipDataType = {
 };
 
 interface OpenBetSlipViewProps {
-  onPress?: () => void;
+  data: BetSlipDataType[];
+  onClose?: () => void;
 }
+
+interface SinglesViewProps {
+  data: BetSlipDataType[];
+  totalBetAmount?: number;
+  onDelete?: (index: number) => void;
+}
+
+interface ParlayViewProps extends SinglesViewProps {
+  onDeleteAll?: () => void;
+}
+
+export const MAX_BET_AMOUNT = 1000000;
 
 const BET_AMOUNTS = [
   { label: "25K", value: "25000" },
   { label: "50K", value: "50000" },
   { label: "100K", value: "100000" },
-  { label: "Custom", value: "-1" },
+  { label: "Custom", value: "0" },
 ];
 
-export const OpenBetSlipView = ({}: OpenBetSlipViewProps) => {
+const initButtonState: ButtonProps = {
+  title: "confirm bet",
+  icon: null,
+};
+
+export const OpenBetSlipView = ({ data, onClose }: OpenBetSlipViewProps) => {
   const dm = Dimensions.get("screen");
+  const [notification, setNotification] = useState<NotificationProps | null>(
+    null
+  );
+  const [totalBetAmount, setTotalBetAmount] = useState<number>(0);
+  const [defaultAmount, setDefaultAmount] = useState<number>(-1);
+  const [isBetting, setIsBetting] = useState<boolean>(false);
+  const [isConfirmed, setIsConfirmed] = useState<boolean>(false);
+  const [buttonState, setButtonState] = useState<ButtonProps>(initButtonState);
 
   const routes = [
     {
       key: "singles",
       title: "Singles",
-      view: <SinglesView />,
+      view: <SinglesView data={data} totalBetAmount={totalBetAmount} />,
     },
     {
       key: "parlay",
       title: "Parlay",
-      view: <ParlayView />,
+      view: <ParlayView data={data} totalBetAmount={totalBetAmount} />,
     },
   ];
 
+  useEffect(() => {
+    if (totalBetAmount <= 0 || totalBetAmount > MAX_BET_AMOUNT) {
+      reset();
+      return;
+    }
+    setNotification({
+      type: "info",
+      message: (
+        <FlexView gap={5} justifyContent="center">
+          <FourStartIcon />
+          You will earn 360XP with this bet
+        </FlexView>
+      ),
+    });
+  }, [totalBetAmount]);
+
+  useEffect(() => {
+    if (isConfirmed) {
+      setButtonState({
+        title: "confirmed",
+        icon: <CheckIcon color={"#2D2606"} />,
+      });
+    } else {
+      setButtonState(initButtonState);
+    }
+  }, [isConfirmed]);
+
+  const reset = () => {
+    setTotalBetAmount(0);
+    setDefaultAmount(-1);
+    setNotification(null);
+    setIsBetting(false);
+    setIsConfirmed(false);
+  };
+
+  const handleChoose = (value: string) => {
+    setTotalBetAmount(Number(value));
+  };
+
+  const handleConfirmBet = () => {
+    if (isBetting || isConfirmed) return;
+
+    setIsBetting(true);
+    setTimeout(() => {
+      // Assume that finish the betting process.
+      setIsBetting(false);
+      setIsConfirmed(true);
+    }, 3000);
+  };
+
+  const handleFollowAction = (keep: boolean) => {
+    if (keep) {
+      reset();
+    } else {
+      onClose?.();
+    }
+  };
+
   return (
     <ThemedView style={[styles.betSlipContainer, { width: dm.width }]}>
-      <ThemedText style={styles.headerTitle}>betslip (2)</ThemedText>
+      <ThemedText
+        style={styles.headerTitle}
+      >{`betslip (${data?.length})`}</ThemedText>
       <TabView routes={routes} />
-      <Wrapper style={{ paddingTop: 0 }}>
-        <RadioButton type="button" onChange={() => {}}>
+      {/* <Wrapper style={{ paddingTop: 0 }}>
+        <Notification
+          type="warning"
+          message="One or more prices may have changed. Check and accept the changes for your selections."
+          textAlign="left"
+          bordered
+          borderStyle="dashed"
+        />
+      </Wrapper> */}
+      <Wrapper style={{ paddingVertical: 0 }}>
+        <RadioButton
+          type="button"
+          defaultValue={String(defaultAmount)}
+          onChange={handleChoose}
+        >
           {BET_AMOUNTS.map((item, index) => (
             <RadioItem key={index} label={item.label} value={item.value} />
           ))}
@@ -59,55 +167,95 @@ export const OpenBetSlipView = ({}: OpenBetSlipViewProps) => {
         <ThemedView style={{ paddingVertical: 8 }}>
           <FlexView justifyContent="space-between">
             <ThemedText style={styles.labelText}>Total bet</ThemedText>
-            <ThemedText style={styles.valueText}>0</ThemedText>
+            <ThemedText style={styles.valueText}>
+              {totalBetAmount.toLocaleString()}
+            </ThemedText>
           </FlexView>
           <FlexView justifyContent="space-between">
             <ThemedText style={styles.labelText}>Potential win</ThemedText>
             <ThemedText style={[styles.valueText, { color: "#F02E95" }]}>
-              0
+              {(totalBetAmount * 1.6).toLocaleString()}
             </ThemedText>
           </FlexView>
         </ThemedView>
-        <Notification
-          type="info"
-          message="You will earn 360XP with this bet"
-          onDismiss={() => console.log("Dismissed")}
-          onAccept={() => console.log("Accepted")}
-        />
+        {notification && (
+          <Notification
+            type={notification.type}
+            message={notification.message}
+          />
+        )}
         <ThemedView style={{ paddingVertical: 8 }}>
           <Button
-            title="confirm bet"
+            title={buttonState.title}
+            loading={isBetting}
+            disabled={!notification}
             bgColor="#FFE100"
             fontSize={16}
-            color="#53470C"
+            color="#2D2606"
+            icon={buttonState?.icon}
+            iconColor="#2D2606"
             paddingVertical={16}
+            onPress={() => {
+              handleConfirmBet();
+            }}
           />
         </ThemedView>
         <ThemedText style={styles.labelText}>
-          Max bet amount: 1.000.000
+          Max bet amount: {MAX_BET_AMOUNT.toLocaleString()}
         </ThemedText>
       </Wrapper>
-    </ThemedView>
-  );
-};
-
-const SinglesView = ({ onPress }: OpenBetSlipViewProps) => {
-  return (
-    <ThemedView>
-      <CurrencyToggleView height={48} fontSize={20} paddingVertical={0} />
-      <Wrapper>
-        <SingleBetSlipView data={BET_DATA} />
+      <Wrapper style={{ paddingVertical: 10 }}>
+        <FlexView style={styles.finalText} gap={8}>
+          <ThemedText>Would you like to copy this bet for</ThemedText>
+          <CircleLogo size={18}>
+            <DollarIcon />
+          </CircleLogo>{" "}
+          <ThemedText style={styles.highlightText}>Cash? </ThemedText>{" "}
+        </FlexView>
+        <FlexView gap={10} justifyContent="space-between">
+          <Button
+            title="no"
+            style={{ flex: 1 }}
+            onPress={() => handleFollowAction(false)}
+          />
+          <Button
+            title="yes"
+            bgColor="#15C54A"
+            style={{ flex: 1 }}
+            onPress={() => handleFollowAction(true)}
+          />
+        </FlexView>
       </Wrapper>
     </ThemedView>
   );
 };
 
-const ParlayView = () => {
+const SinglesView = ({
+  data,
+  totalBetAmount = 0,
+  onDelete,
+}: ParlayViewProps) => {
   return (
     <ThemedView>
       <CurrencyToggleView height={48} fontSize={20} paddingVertical={0} />
       <Wrapper>
-        <ParlayBetSlipView data={BET_DATA} />
+        <SingleBetSlipView data={data} totalBetAmount={totalBetAmount} />
+      </Wrapper>
+    </ThemedView>
+  );
+};
+
+const ParlayView = ({
+  data,
+  totalBetAmount = 0,
+  onDelete,
+  onDeleteAll,
+}: ParlayViewProps) => {
+  return (
+    <ThemedView>
+      <CurrencyToggleView height={48} fontSize={20} paddingVertical={0} />
+      <Wrapper>
+        <ParlayBetSlipView data={data} totalBetAmount={totalBetAmount} />
       </Wrapper>
     </ThemedView>
   );
@@ -129,5 +277,14 @@ const styles = StyleSheet.create({
   },
   valueText: {
     color: "#FFF",
+  },
+  finalText: {
+    fontSize: 16,
+    fontWeight: 500,
+    color: "#FFF",
+    marginBottom: 10,
+  },
+  highlightText: {
+    color: "#15C54A",
   },
 });

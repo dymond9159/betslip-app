@@ -3,10 +3,9 @@ import { StyleSheet } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 
 import { Wrapper } from "../Wrapper";
-import { ThemedView } from "../ThemedView";
 import { LogoIcon } from "../icons";
 import { ThemedText } from "../ThemedText";
-import { Switch } from "../ui";
+import { CircleLogo, Switch } from "../ui";
 import { DimensionValue } from "react-native";
 
 interface CurrencyToggleViewProps {
@@ -32,14 +31,9 @@ export const CurrencyToggleView = ({
       style={[styles.stimiCurrencyToggle, { width, paddingVertical }]}
     >
       <Wrapper style={styles.flexBar}>
-        <ThemedView
-          style={[
-            styles.logoBox,
-            { width: fontSize * 1.2, height: fontSize * 1.2 },
-          ]}
-        >
+        <CircleLogo size={fontSize}>
           <LogoIcon />
-        </ThemedView>
+        </CircleLogo>
         <ThemedText style={[styles.amountText, { fontSize }]}>
           12,000,000
         </ThemedText>

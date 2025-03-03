@@ -1,24 +1,38 @@
-import { TouchableOpacity, StyleSheet, Image } from "react-native";
+import { useEffect, useState } from "react";
+import { TouchableOpacity, StyleSheet } from "react-native";
+
+import { Input } from "../ui";
 import { BoardView } from "../BoardView";
 import { FlexView } from "../FlexView";
 import { TrashIcon } from "../icons";
 import { Wrapper } from "../Wrapper";
 import { ThemedView } from "../ThemedView";
 import { ThemedText } from "../ThemedText";
-import { Input } from "../ui";
 import { BetSlipDataType } from "./OpenBetSlipView";
 
 interface ParlayBetSlipViewViewProps {
   data?: BetSlipDataType[];
+  totalBetAmount?: number;
   onDelete?: (index: number, data?: BetSlipDataType) => void;
   onDeleteAll?: () => void;
 }
 
 export const ParlayBetSlipView = ({
   data,
+  totalBetAmount = 0,
   onDelete,
   onDeleteAll,
 }: ParlayBetSlipViewViewProps) => {
+  const [currentValue, setCurrentValue] = useState<number>(0);
+
+  useEffect(() => {
+    setCurrentValue(totalBetAmount);
+  }, [totalBetAmount]);
+
+  const handleChangeAmount = (value: string) => {
+    setCurrentValue(Number(value));
+  };
+
   return (
     <BoardView bgColor="#FFFFFF1A" style={{ marginBottom: 10 }}>
       <FlexView>
@@ -42,10 +56,11 @@ export const ParlayBetSlipView = ({
                   </ThemedText>
                 </ThemedView>
                 <Input
-                  value={"0"}
+                  value={currentValue.toLocaleString()}
                   width={100}
                   height={32}
                   style={{ fontSize: 14 }}
+                  onChangeText={(value) => handleChangeAmount(value)}
                 />
               </FlexView>
             </ThemedView>

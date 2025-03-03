@@ -11,7 +11,7 @@ import {
 } from "@/components/sports";
 import { Button, Divider, Input, SubjectView } from "@/components/ui";
 import { ThemedView, ThemedText, Category, FlexView, Card } from "@/components";
-import { CATEGORIES, MATCHES, TABLES } from "../../utils/mockup-data";
+import { BET_DATA, CATEGORIES, MATCHES, TABLES } from "../../utils/mockup-data";
 import { ChevronRightIcon, SearchIcon } from "@/components/icons";
 
 export default function HomeScreen() {
@@ -21,11 +21,14 @@ export default function HomeScreen() {
   const handleOpenModal = useCallback(() => {
     bottomSheetModalRef.current?.present();
     navigation.setOptions({ tabBarStyle: { display: "none" } });
-  }, []);
+  }, [navigation]);
 
   const handleCloseModal = useCallback(() => {
+    if (bottomSheetModalRef.current) {
+      bottomSheetModalRef.current.dismiss();
+    }
     navigation.setOptions({ tabBarStyle: { display: "block", height: 60 } });
-  }, []);
+  }, [navigation]);
 
   return (
     <Container>
@@ -122,7 +125,12 @@ export default function HomeScreen() {
         </Wrapper>
       </ThemedView>
       <BottomSheetModal ref={bottomSheetModalRef} onClose={handleCloseModal}>
-        <OpenBetSlipView />
+        <OpenBetSlipView
+          data={BET_DATA}
+          onClose={() => {
+            handleCloseModal();
+          }}
+        />
       </BottomSheetModal>
     </Container>
   );

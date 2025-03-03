@@ -1,26 +1,32 @@
-import { ReactElement } from "react";
+import { ReactElement, useEffect, useRef } from "react";
 import {
   GestureResponderEvent,
   ButtonProps as RNButtonProps,
   StyleSheet,
   TouchableOpacity,
   ViewStyle,
+  Animated,
+  Easing,
 } from "react-native";
 import { ThemedText } from "../ThemedText";
+import { LoadingIcon } from "../icons";
+import { ThemedView } from "../ThemedView";
 
-interface ButtonProps extends RNButtonProps {
+export interface ButtonProps extends RNButtonProps {
   title: string;
   bgColor?: string;
   color?: string;
   radius?: number;
   fontFamily?: string;
   fontSize?: number;
-  icon?: ReactElement;
+  icon?: ReactElement | null;
   iconSize?: number;
   iconColor?: string;
   paddingVertical?: number;
   paddingHorizontal?: number;
   style?: ViewStyle;
+  loading?: boolean;
+  loadingTitle?: string;
   onPress?: (event: GestureResponderEvent) => void;
 }
 
@@ -34,12 +40,46 @@ export const Button = ({
   icon,
   iconSize = 20,
   iconColor = "#fff",
-  paddingVertical = 8,
+  paddingVertical = 16,
   paddingHorizontal = 8,
   style,
+  disabled,
+  loading = false,
+  loadingTitle = "confirming...",
   onPress,
-  ...props
 }: ButtonProps) => {
+  const spinValue = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    if (loading) {
+      spinValue.setValue(0);
+
+      const startSpin = () => {
+        Animated.loop(
+          Animated.timing(spinValue, {
+            toValue: 1,
+            duration: 1500,
+            easing: Easing.linear,
+            useNativeDriver: true,
+          })
+        ).start();
+      };
+
+      startSpin();
+    } else {
+      spinValue.stopAnimation();
+    }
+
+    return () => {
+      spinValue.stopAnimation();
+    };
+  }, [loading, spinValue]);
+
+  const spin = spinValue.interpolate({
+    inputRange: [0, 1],
+    outputRange: ["0deg", "360deg"],
+  });
+
   return (
     <TouchableOpacity
       style={[
@@ -49,18 +89,29 @@ export const Button = ({
           borderRadius: radius,
           paddingVertical,
           paddingHorizontal,
+          opacity: disabled ? 0.6 : 1,
         },
         style,
       ]}
+      disabled={disabled}
       onPress={onPress}
       activeOpacity={0.8}
     >
-      {icon}
+      {icon && <ThemedView style={{ marginRight: 10 }}>{icon}</ThemedView>}
+      {loading && (
+        <ThemedView style={{ marginRight: 10 }}>
+          <Animated.View
+            style={[styles.spinner, { transform: [{ rotate: spin }] }]}
+          >
+            <LoadingIcon color={iconColor} />
+          </Animated.View>
+        </ThemedView>
+      )}
       {title !== "" && (
         <ThemedText
           style={[{ color, fontFamily, fontSize, lineHeight: fontSize * 1.1 }]}
         >
-          {title}
+          {loading ? loadingTitle : title}
         </ThemedText>
       )}
     </TouchableOpacity>
@@ -70,6 +121,10 @@ export const Button = ({
 const styles = StyleSheet.create({
   button: {
     flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  spinner: {
     alignItems: "center",
     justifyContent: "center",
   },

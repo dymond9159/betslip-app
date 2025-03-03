@@ -1,22 +1,47 @@
+import { useEffect, useState } from "react";
 import { TouchableOpacity, StyleSheet, Image } from "react-native";
+
+import { Input } from "../ui";
 import { BoardView } from "../BoardView";
 import { FlexView } from "../FlexView";
-import { TrashIcon } from "../icons";
 import { Wrapper } from "../Wrapper";
 import { ThemedView } from "../ThemedView";
 import { ThemedText } from "../ThemedText";
-import { Input } from "../ui";
 import { BetSlipDataType } from "./OpenBetSlipView";
+import { TrashIcon } from "../icons";
 
 interface SingleBetSlipViewProps {
   data?: BetSlipDataType[];
-  onDelete?: (index: number, data?: BetSlipDataType) => void;
+  totalBetAmount?: number;
+  onChangeBetAmount?: (value: string) => void;
+  onDelete?: (index: number) => void;
 }
 
 export const SingleBetSlipView = ({
   data,
+  totalBetAmount = 0,
+  onChangeBetAmount,
   onDelete,
 }: SingleBetSlipViewProps) => {
+  const count = data?.length;
+
+  const [currentValue, setCurrentValue] = useState<number[]>(
+    new Array(count).fill(0)
+  );
+
+  useEffect(() => {
+    const avgBetAmount = totalBetAmount / (count || 1);
+    setCurrentValue(new Array(count).fill(avgBetAmount));
+  }, [totalBetAmount]);
+
+  const handleChangeAmount = (index: number, value: string) => {
+    setCurrentValue((prev) => {
+      const updatedValues = [...prev];
+      updatedValues[index] = parseFloat(value) || 0;
+      return updatedValues;
+    });
+  };
+
   return (
     <>
       {data?.map((item, index) => (
@@ -24,7 +49,7 @@ export const SingleBetSlipView = ({
           <FlexView>
             <TouchableOpacity
               style={styles.deleteButton}
-              onPress={() => onDelete?.(index, item)}
+              onPress={() => onDelete?.(index)}
               activeOpacity={0.9}
             >
               <TrashIcon color="#FFF" size={18} />
@@ -55,10 +80,12 @@ export const SingleBetSlipView = ({
                       {item.value1}
                     </ThemedText>
                     <Input
-                      value={"0"}
+                      inputMode="decimal"
+                      value={currentValue[index].toLocaleString()}
                       width={100}
                       height={32}
                       style={{ fontSize: 14 }}
+                      onChangeText={(value) => handleChangeAmount(index, value)}
                     />
                   </FlexView>
                 </ThemedView>

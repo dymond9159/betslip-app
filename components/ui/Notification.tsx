@@ -8,8 +8,10 @@ import {
 import { ThemedText } from "../ThemedText";
 import { ThemedView } from "../ThemedView";
 
-interface NotificationProps {
-  type?: "info" | "warning";
+export type NotificationType = "info" | "warning";
+
+export interface NotificationProps {
+  type?: NotificationType;
   title?: React.ReactNode;
   message: React.ReactNode;
   bordered?: boolean;
@@ -23,6 +25,7 @@ interface NotificationProps {
   style?: ViewStyle;
   titleStyle?: TextStyle;
   messageStyle?: TextStyle;
+  textAlign?: "auto" | "left" | "right" | "center" | "justify" | undefined;
 }
 
 export const Notification = ({
@@ -40,6 +43,7 @@ export const Notification = ({
   style,
   titleStyle,
   messageStyle,
+  textAlign = "center",
 }: NotificationProps) => {
   const defaultBgColor = type === "info" ? "#44FFC41A" : "#FFE1001A";
   const defaultTextColor = type === "info" ? "#00FFF2" : "#FFE100";
@@ -61,7 +65,7 @@ export const Notification = ({
         <ThemedText
           style={[
             styles.title,
-            { color: color || defaultTextColor },
+            { color: color || defaultTextColor, textAlign },
             titleStyle,
           ]}
         >
@@ -75,14 +79,22 @@ export const Notification = ({
         <ThemedText
           style={[
             styles.message,
-            { color: color || defaultTextColor },
             messageStyle,
+            { color: color || defaultTextColor, textAlign },
           ]}
         >
           {message}
         </ThemedText>
       ) : (
-        message
+        <ThemedText
+          style={[
+            styles.message,
+            messageStyle,
+            { color: color || defaultTextColor, textAlign },
+          ]}
+        >
+          {message}
+        </ThemedText>
       )}
 
       {action && (
@@ -116,7 +128,7 @@ export const Notification = ({
 
 const styles = StyleSheet.create({
   container: {
-    paddingVertical: 12,
+    paddingVertical: 8,
     paddingHorizontal: 16,
     borderRadius: 8,
     marginBottom: 12,
