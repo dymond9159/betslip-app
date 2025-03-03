@@ -71,7 +71,7 @@ const initButtonState: ButtonProps = {
 
 export const OpenBetSlipView = ({ data, onClose }: OpenBetSlipViewProps) => {
   const dm = Dimensions.get("screen");
-  const { theme } = useBetSlipTheme();
+  const { theme, switchTheme } = useBetSlipTheme();
 
   const [notification, setNotification] = useState<NotificationProps | null>(
     null
@@ -148,6 +148,7 @@ export const OpenBetSlipView = ({ data, onClose }: OpenBetSlipViewProps) => {
   const handleFollowAction = (keep: boolean) => {
     if (keep) {
       reset();
+      switchTheme(theme.name === "coin" ? "cash" : "coin");
     } else {
       onClose?.();
     }
@@ -222,42 +223,44 @@ export const OpenBetSlipView = ({ data, onClose }: OpenBetSlipViewProps) => {
           Max bet amount: {currencyFormat(MAX_BET_AMOUNT, theme.name, 0.01)}
         </ThemedText>
       </Wrapper>
-      <Wrapper style={{ paddingVertical: 10 }}>
-        <FlexView style={styles.finalText} gap={8}>
-          <ThemedText>Would you like to copy this bet for</ThemedText>
-          <CurrencyView
-            size={18}
-            currency={theme.name === "coin" ? "cash" : "coin"}
-          />
-          <ThemedText
-            style={{
-              color:
+      {true && (
+        <Wrapper style={{ paddingVertical: 10 }}>
+          <FlexView style={styles.finalText} gap={8}>
+            <ThemedText>Would you like to copy this bet for</ThemedText>
+            <CurrencyView
+              size={18}
+              currency={theme.name === "coin" ? "cash" : "coin"}
+            />
+            <ThemedText
+              style={{
+                color:
+                  theme.name === "coin"
+                    ? Themes.cash.primaryColor
+                    : Themes.coin.primaryColor,
+              }}
+            >
+              {theme.name === "coin" ? "Cash?" : "Coin?"}
+            </ThemedText>{" "}
+          </FlexView>
+          <FlexView gap={10} justifyContent="space-between">
+            <Button
+              title="no"
+              style={{ flex: 1 }}
+              onPress={() => handleFollowAction(false)}
+            />
+            <Button
+              title="yes"
+              bgColor={
                 theme.name === "coin"
                   ? Themes.cash.primaryColor
-                  : Themes.coin.primaryColor,
-            }}
-          >
-            {theme.name === "coin" ? "Cash?" : "Coin?"}
-          </ThemedText>{" "}
-        </FlexView>
-        <FlexView gap={10} justifyContent="space-between">
-          <Button
-            title="no"
-            style={{ flex: 1 }}
-            onPress={() => handleFollowAction(false)}
-          />
-          <Button
-            title="yes"
-            bgColor={
-              theme.name === "coin"
-                ? Themes.cash.primaryColor
-                : Themes.coin.primaryColor
-            }
-            style={{ flex: 1 }}
-            onPress={() => handleFollowAction(true)}
-          />
-        </FlexView>
-      </Wrapper>
+                  : Themes.coin.primaryColor
+              }
+              style={{ flex: 1 }}
+              onPress={() => handleFollowAction(true)}
+            />
+          </FlexView>
+        </Wrapper>
+      )}
     </ThemedView>
   );
 };

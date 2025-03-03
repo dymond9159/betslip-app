@@ -27,14 +27,12 @@ export const CurrencyToggleView = ({
   amount = 0,
 }: CurrencyToggleViewProps) => {
   const { theme, switchTheme } = useBetSlipTheme();
-  const { exchangeRate } = useCurrencyExchange();
 
   const [isStimiCurrency, toggleStimiCurrency] = useState(false);
 
   useEffect(() => {
     toggleStimiCurrency(theme.name === "cash");
   }, [theme.name]);
-  console.log(isStimiCurrency, theme.name);
 
   const handleToggleCurrency = (value: boolean) => {
     switchTheme(value ? "cash" : "coin");
