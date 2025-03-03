@@ -8,7 +8,6 @@ import { BookmarkIcon, NotificationIcon, ProfileIcon } from "./icons";
 import { FlexView } from "./FlexView";
 import { Wrapper } from "./Wrapper";
 
-const HEADER_HEIGHT = 60;
 export default function HeaderView() {
   return (
     <ThemedView style={styles.header}>
@@ -31,10 +30,8 @@ export default function HeaderView() {
 const styles = StyleSheet.create({
   header: {
     width: "100%",
-    height: HEADER_HEIGHT,
     overflow: "hidden",
     color: "white",
-    backgroundColor: "#101216",
   },
   textLogo: {
     flex: 1,

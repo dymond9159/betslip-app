@@ -40,8 +40,8 @@ export const Button = ({
   icon,
   iconSize = 20,
   iconColor = "#fff",
-  paddingVertical = 16,
-  paddingHorizontal = 8,
+  paddingVertical = 12,
+  paddingHorizontal = 12,
   style,
   disabled,
   loading = false,
@@ -90,6 +90,9 @@ export const Button = ({
           paddingVertical,
           paddingHorizontal,
           opacity: disabled ? 0.6 : 1,
+          display: "flex",
+          flexDirection: "row",
+          gap: 10,
         },
         style,
       ]}
@@ -97,7 +100,7 @@ export const Button = ({
       onPress={onPress}
       activeOpacity={0.8}
     >
-      {icon && <ThemedView style={{ marginRight: 10 }}>{icon}</ThemedView>}
+      {icon && <ThemedView>{icon}</ThemedView>}
       {loading && (
         <ThemedView style={{ marginRight: 10 }}>
           <Animated.View

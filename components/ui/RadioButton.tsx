@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { ThemedText } from "../ThemedText";
 import { ThemedView } from "../ThemedView";
+import { useBetSlipTheme } from "@/hooks/useBetSlipTheme";
 
 interface RadioButtonContextProps {
   selectedValue: string;
@@ -40,6 +41,7 @@ export const RadioButton = ({
   style,
 }: RadioButtonProps) => {
   const [selectedValue, setSelectedValue] = useState(defaultValue);
+  const { theme } = useBetSlipTheme();
 
   const handlePress = (value: string, event: GestureResponderEvent) => {
     setSelectedValue(value);
@@ -52,7 +54,7 @@ export const RadioButton = ({
         selectedValue,
         onChange: handlePress,
         type,
-        checkedColor,
+        checkedColor: theme.primaryColor,
         defaultColor,
       }}
     >

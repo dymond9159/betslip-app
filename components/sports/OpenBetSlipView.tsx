@@ -1,5 +1,10 @@
 import { useEffect, useState } from "react";
-import { Dimensions, ImageSourcePropType, StyleSheet } from "react-native";
+import {
+  Dimensions,
+  ImageSourcePropType,
+  ScrollView,
+  StyleSheet,
+} from "react-native";
 
 import {
   Button,
@@ -156,111 +161,118 @@ export const OpenBetSlipView = ({ data, onClose }: OpenBetSlipViewProps) => {
 
   return (
     <ThemedView style={[styles.betSlipContainer, { width: dm.width }]}>
-      <ThemedText
-        style={styles.headerTitle}
-      >{`betslip (${data?.length})`}</ThemedText>
-      <TabView routes={routes} />
-      {/* <Wrapper style={{ paddingTop: 0 }}>
-        <Notification
-          type="warning"
-          message="One or more prices may have changed. Check and accept the changes for your selections."
-          textAlign="left"
-          bordered
-          borderStyle="dashed"
-        />
-      </Wrapper> */}
-      <Wrapper style={{ paddingVertical: 0 }}>
-        <RadioButton
-          type="button"
-          defaultValue={String(defaultAmount)}
-          onChange={handleChoose}
-        >
-          {BET_AMOUNTS[theme.name as keyof typeof BET_AMOUNTS].map(
-            (item, index) => (
-              <RadioItem key={index} label={item.label} value={item.value} />
-            )
-          )}
-        </RadioButton>
-        <ThemedView style={{ paddingVertical: 8 }}>
-          <FlexView justifyContent="space-between">
-            <ThemedText style={styles.labelText}>Total bet</ThemedText>
-            <ThemedText style={styles.valueText}>
-              {currencyFormat(totalBetAmount, theme.name, 1)}
-            </ThemedText>
-          </FlexView>
-          <FlexView justifyContent="space-between">
-            <ThemedText style={styles.labelText}>Potential win</ThemedText>
-            <ThemedText
-              style={[styles.valueText, { color: theme.primaryColor }]}
-            >
-              {currencyFormat(totalBetAmount * 1.6, theme.name, 1)}
-            </ThemedText>
-          </FlexView>
-        </ThemedView>
-        {notification && (
+      <ThemedText style={styles.headerTitle}>
+        {`betslip (${data?.length})`}
+      </ThemedText>
+      <ScrollView
+        horizontal={false}
+        showsHorizontalScrollIndicator={false}
+        showsVerticalScrollIndicator={true}
+        style={{ flex: 1 }}
+      >
+        <TabView routes={routes} />
+        {/* <Wrapper style={{ paddingTop: 0 }}>
           <Notification
-            type={notification.type}
-            message={notification.message}
+            type="warning"
+            message="One or more prices may have changed. Check and accept the changes for your selections."
+            textAlign="left"
+            bordered
+            borderStyle="dashed"
           />
-        )}
-        <ThemedView style={{ paddingVertical: 8 }}>
-          <Button
-            title={buttonState.title}
-            loading={isBetting}
-            disabled={!notification}
-            bgColor={theme.secondaryColor}
-            color={theme.secondaryDeepColor}
-            fontSize={16}
-            icon={buttonState?.icon}
-            iconColor="#2D2606"
-            paddingVertical={16}
-            onPress={() => {
-              handleConfirmBet();
-            }}
-          />
-        </ThemedView>
-        <ThemedText style={styles.labelText}>
-          Max bet amount: {currencyFormat(MAX_BET_AMOUNT, theme.name, 0.01)}
-        </ThemedText>
-      </Wrapper>
-      {true && (
-        <Wrapper style={{ paddingVertical: 10 }}>
-          <FlexView style={styles.finalText} gap={8}>
-            <ThemedText>Would you like to copy this bet for</ThemedText>
-            <CurrencyView
-              size={18}
-              currency={theme.name === "coin" ? "cash" : "coin"}
+        </Wrapper> */}
+        <Wrapper style={{ paddingTop: 0 }}>
+          <RadioButton
+            type="button"
+            defaultValue={String(defaultAmount)}
+            onChange={handleChoose}
+          >
+            {BET_AMOUNTS[theme.name as keyof typeof BET_AMOUNTS].map(
+              (item, index) => (
+                <RadioItem key={index} label={item.label} value={item.value} />
+              )
+            )}
+          </RadioButton>
+          <ThemedView style={{ paddingVertical: 8 }}>
+            <FlexView justifyContent="space-between">
+              <ThemedText style={styles.labelText}>Total bet</ThemedText>
+              <ThemedText style={styles.valueText}>
+                {currencyFormat(totalBetAmount, theme.name, 1)}
+              </ThemedText>
+            </FlexView>
+            <FlexView justifyContent="space-between">
+              <ThemedText style={styles.labelText}>Potential win</ThemedText>
+              <ThemedText
+                style={[styles.valueText, { color: theme.primaryColor }]}
+              >
+                {currencyFormat(totalBetAmount * 1.6, theme.name, 1)}
+              </ThemedText>
+            </FlexView>
+          </ThemedView>
+          {notification && (
+            <Notification
+              type={notification.type}
+              message={notification.message}
             />
-            <ThemedText
-              style={{
-                color:
+          )}
+          <ThemedView style={{ paddingVertical: 8 }}>
+            <Button
+              title={buttonState.title}
+              loading={isBetting}
+              disabled={!notification}
+              bgColor={theme.secondaryColor}
+              color={theme.secondaryDeepColor}
+              fontSize={16}
+              icon={buttonState?.icon}
+              iconColor="#2D2606"
+              paddingVertical={16}
+              onPress={() => {
+                handleConfirmBet();
+              }}
+            />
+          </ThemedView>
+          <ThemedText style={[styles.labelText, { marginBottom: 10 }]}>
+            Max bet amount: {currencyFormat(MAX_BET_AMOUNT, theme.name, 0.01)}
+          </ThemedText>
+        </Wrapper>
+        {isConfirmed && (
+          <Wrapper style={{ paddingTop: 0, paddingBottom: 10 }}>
+            <FlexView style={styles.finalText} gap={8}>
+              <ThemedText>Would you like to copy this bet for</ThemedText>
+              <CurrencyView
+                size={18}
+                currency={theme.name === "coin" ? "cash" : "coin"}
+              />
+              <ThemedText
+                style={{
+                  color:
+                    theme.name === "coin"
+                      ? Themes.cash.primaryColor
+                      : Themes.coin.primaryColor,
+                }}
+              >
+                {theme.name === "coin" ? "Cash?" : "Coin?"}
+              </ThemedText>{" "}
+            </FlexView>
+            <FlexView gap={10} justifyContent="space-between">
+              <Button
+                title="no"
+                style={{ flex: 1 }}
+                onPress={() => handleFollowAction(false)}
+              />
+              <Button
+                title="yes"
+                bgColor={
                   theme.name === "coin"
                     ? Themes.cash.primaryColor
-                    : Themes.coin.primaryColor,
-              }}
-            >
-              {theme.name === "coin" ? "Cash?" : "Coin?"}
-            </ThemedText>{" "}
-          </FlexView>
-          <FlexView gap={10} justifyContent="space-between">
-            <Button
-              title="no"
-              style={{ flex: 1 }}
-              onPress={() => handleFollowAction(false)}
-            />
-            <Button
-              title="yes"
-              bgColor={
-                theme.name === "coin"
-                  ? Themes.cash.primaryColor
-                  : Themes.coin.primaryColor
-              }
-              style={{ flex: 1 }}
-              onPress={() => handleFollowAction(true)}
-            />
-          </FlexView>
-        </Wrapper>
-      )}
+                    : Themes.coin.primaryColor
+                }
+                style={{ flex: 1 }}
+                onPress={() => handleFollowAction(true)}
+              />
+            </FlexView>
+          </Wrapper>
+        )}
+      </ScrollView>
     </ThemedView>
   );
 };
