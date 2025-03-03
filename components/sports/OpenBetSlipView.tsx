@@ -4,7 +4,7 @@ import { Dimensions, ImageSourcePropType, StyleSheet } from "react-native";
 import {
   Button,
   ButtonProps,
-  CircleLogo,
+  CurrencyView,
   Notification,
   NotificationProps,
   RadioButton,
@@ -18,7 +18,11 @@ import { FlexView } from "../FlexView";
 import { CurrencyToggleView } from "./CurrencyToggleView";
 import { SingleBetSlipView } from "./SingleBetSlipView";
 import { ParlayBetSlipView } from "./ParlayBetSlipView";
-import { CheckIcon, DollarIcon, FourStartIcon } from "../icons";
+import { CheckIcon, FourStartIcon } from "../icons";
+import { useBetSlipTheme } from "@/hooks/useBetSlipTheme";
+import { Themes } from "@/constants/Theme";
+import { useCurrencyExchange } from "@/hooks/useCurrencyExchange";
+import { currencyFormat } from "@/utils/functions";
 
 export type BetSlipDataType = {
   challengeTitle: string;
@@ -45,12 +49,20 @@ interface ParlayViewProps extends SinglesViewProps {
 
 export const MAX_BET_AMOUNT = 1000000;
 
-const BET_AMOUNTS = [
-  { label: "25K", value: "25000" },
-  { label: "50K", value: "50000" },
-  { label: "100K", value: "100000" },
-  { label: "Custom", value: "0" },
-];
+const BET_AMOUNTS = {
+  coin: [
+    { label: "25K", value: "25000" },
+    { label: "50K", value: "50000" },
+    { label: "100K", value: "100000" },
+    { label: "Custom", value: "0" },
+  ],
+  cash: [
+    { label: "$50", value: "50" },
+    { label: "$100", value: "100" },
+    { label: "$200", value: "200" },
+    { label: "Custom", value: "0" },
+  ],
+};
 
 const initButtonState: ButtonProps = {
   title: "confirm bet",
@@ -59,6 +71,8 @@ const initButtonState: ButtonProps = {
 
 export const OpenBetSlipView = ({ data, onClose }: OpenBetSlipViewProps) => {
   const dm = Dimensions.get("screen");
+  const { theme } = useBetSlipTheme();
+
   const [notification, setNotification] = useState<NotificationProps | null>(
     null
   );
@@ -160,21 +174,25 @@ export const OpenBetSlipView = ({ data, onClose }: OpenBetSlipViewProps) => {
           defaultValue={String(defaultAmount)}
           onChange={handleChoose}
         >
-          {BET_AMOUNTS.map((item, index) => (
-            <RadioItem key={index} label={item.label} value={item.value} />
-          ))}
+          {BET_AMOUNTS[theme.name as keyof typeof BET_AMOUNTS].map(
+            (item, index) => (
+              <RadioItem key={index} label={item.label} value={item.value} />
+            )
+          )}
         </RadioButton>
         <ThemedView style={{ paddingVertical: 8 }}>
           <FlexView justifyContent="space-between">
             <ThemedText style={styles.labelText}>Total bet</ThemedText>
             <ThemedText style={styles.valueText}>
-              {totalBetAmount.toLocaleString()}
+              {currencyFormat(totalBetAmount, theme.name, 1)}
             </ThemedText>
           </FlexView>
           <FlexView justifyContent="space-between">
             <ThemedText style={styles.labelText}>Potential win</ThemedText>
-            <ThemedText style={[styles.valueText, { color: "#F02E95" }]}>
-              {(totalBetAmount * 1.6).toLocaleString()}
+            <ThemedText
+              style={[styles.valueText, { color: theme.primaryColor }]}
+            >
+              {currencyFormat(totalBetAmount * 1.6, theme.name, 1)}
             </ThemedText>
           </FlexView>
         </ThemedView>
@@ -189,9 +207,9 @@ export const OpenBetSlipView = ({ data, onClose }: OpenBetSlipViewProps) => {
             title={buttonState.title}
             loading={isBetting}
             disabled={!notification}
-            bgColor="#FFE100"
+            bgColor={theme.secondaryColor}
+            color={theme.secondaryDeepColor}
             fontSize={16}
-            color="#2D2606"
             icon={buttonState?.icon}
             iconColor="#2D2606"
             paddingVertical={16}
@@ -201,16 +219,26 @@ export const OpenBetSlipView = ({ data, onClose }: OpenBetSlipViewProps) => {
           />
         </ThemedView>
         <ThemedText style={styles.labelText}>
-          Max bet amount: {MAX_BET_AMOUNT.toLocaleString()}
+          Max bet amount: {currencyFormat(MAX_BET_AMOUNT, theme.name, 0.01)}
         </ThemedText>
       </Wrapper>
       <Wrapper style={{ paddingVertical: 10 }}>
         <FlexView style={styles.finalText} gap={8}>
           <ThemedText>Would you like to copy this bet for</ThemedText>
-          <CircleLogo size={18}>
-            <DollarIcon />
-          </CircleLogo>{" "}
-          <ThemedText style={styles.highlightText}>Cash? </ThemedText>{" "}
+          <CurrencyView
+            size={18}
+            currency={theme.name === "coin" ? "cash" : "coin"}
+          />
+          <ThemedText
+            style={{
+              color:
+                theme.name === "coin"
+                  ? Themes.cash.primaryColor
+                  : Themes.coin.primaryColor,
+            }}
+          >
+            {theme.name === "coin" ? "Cash?" : "Coin?"}
+          </ThemedText>{" "}
         </FlexView>
         <FlexView gap={10} justifyContent="space-between">
           <Button
@@ -220,7 +248,11 @@ export const OpenBetSlipView = ({ data, onClose }: OpenBetSlipViewProps) => {
           />
           <Button
             title="yes"
-            bgColor="#15C54A"
+            bgColor={
+              theme.name === "coin"
+                ? Themes.cash.primaryColor
+                : Themes.coin.primaryColor
+            }
             style={{ flex: 1 }}
             onPress={() => handleFollowAction(true)}
           />
@@ -237,7 +269,12 @@ const SinglesView = ({
 }: ParlayViewProps) => {
   return (
     <ThemedView>
-      <CurrencyToggleView height={48} fontSize={20} paddingVertical={0} />
+      <CurrencyToggleView
+        amount={useCurrencyExchange().amount}
+        height={48}
+        fontSize={20}
+        paddingVertical={0}
+      />
       <Wrapper>
         <SingleBetSlipView data={data} totalBetAmount={totalBetAmount} />
       </Wrapper>
@@ -253,7 +290,12 @@ const ParlayView = ({
 }: ParlayViewProps) => {
   return (
     <ThemedView>
-      <CurrencyToggleView height={48} fontSize={20} paddingVertical={0} />
+      <CurrencyToggleView
+        amount={useCurrencyExchange().amount}
+        height={48}
+        fontSize={20}
+        paddingVertical={0}
+      />
       <Wrapper>
         <ParlayBetSlipView data={data} totalBetAmount={totalBetAmount} />
       </Wrapper>
@@ -283,8 +325,5 @@ const styles = StyleSheet.create({
     fontWeight: 500,
     color: "#FFF",
     marginBottom: 10,
-  },
-  highlightText: {
-    color: "#15C54A",
   },
 });

@@ -14,12 +14,13 @@ import {
   SportsIcon,
 } from "@/components/icons";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { Container, ThemedText } from "@/components";
+import { Container } from "@/components";
 import HeaderView from "@/components/HeaderView";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
+import { useBetSlipTheme } from "@/hooks/useBetSlipTheme";
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
+  const { theme } = useBetSlipTheme();
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
@@ -28,7 +29,7 @@ export default function TabLayout() {
           <HeaderView />
           <Tabs
             screenOptions={{
-              tabBarActiveTintColor: Colors[colorScheme ?? "dark"].tint,
+              tabBarActiveTintColor: theme.textColor,
               headerShown: false,
               tabBarButton: HapticTab,
               tabBarBackground: TabBarBackground,
@@ -36,15 +37,15 @@ export default function TabLayout() {
                 ios: {
                   // Use a transparent background on iOS to show the blur effect
                   position: "absolute",
-                  backgroundColor: "#101216",
+                  backgroundColor: theme.background,
                   height: 60,
                 },
                 default: {
                   height: 60,
-                  backgroundColor: "#101216",
+                  backgroundColor: theme.background,
                   borderTopWidth: 2,
-                  borderTopColor: "#F3F3F31A",
-                  shadowColor: "#000",
+                  borderTopColor: theme.borderColor,
+                  shadowColor: theme.shadowColor,
                   shadowOffset: { width: 0, height: -8 },
                   shadowOpacity: 0.4,
                   shadowRadius: 20,

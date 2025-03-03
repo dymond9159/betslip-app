@@ -7,4 +7,4 @@ export * from "./Avatar";
 export * from "./GroupAvatar";
 export * from "./Divider";
 export * from "./Notification";
-export * from "./CircleLogo";
+export * from "./CurrencyView";

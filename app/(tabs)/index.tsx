@@ -13,10 +13,13 @@ import { Button, Divider, Input, SubjectView } from "@/components/ui";
 import { ThemedView, ThemedText, Category, FlexView, Card } from "@/components";
 import { BET_DATA, CATEGORIES, MATCHES, TABLES } from "../../utils/mockup-data";
 import { ChevronRightIcon, SearchIcon } from "@/components/icons";
+import { useBetSlipTheme } from "@/hooks/useBetSlipTheme";
+import { useCurrencyExchange } from "@/hooks/useCurrencyExchange";
 
 export default function HomeScreen() {
   const bottomSheetModalRef = useRef<BottomSheetModalBase>(null);
   const navigation = useNavigation();
+  const { theme } = useBetSlipTheme();
 
   const handleOpenModal = useCallback(() => {
     bottomSheetModalRef.current?.present();
@@ -24,9 +27,6 @@ export default function HomeScreen() {
   }, [navigation]);
 
   const handleCloseModal = useCallback(() => {
-    if (bottomSheetModalRef.current) {
-      bottomSheetModalRef.current.dismiss();
-    }
     navigation.setOptions({ tabBarStyle: { display: "block", height: 60 } });
   }, [navigation]);
 
@@ -37,7 +37,7 @@ export default function HomeScreen() {
         showsHorizontalScrollIndicator={false}
         style={styles.scrollView}
       >
-        <CurrencyToggleView />
+        <CurrencyToggleView amount={useCurrencyExchange().amount} />
         <Wrapper>
           <Input
             icon={<SearchIcon />}
@@ -93,8 +93,8 @@ export default function HomeScreen() {
                 <ThemedText>NBA</ThemedText>
                 <Button
                   title="popular"
-                  bgColor="#FFE100"
-                  color="#53470C"
+                  bgColor={theme.secondaryColor}
+                  color={theme.secondaryDeepColor}
                   paddingHorizontal={8}
                   paddingVertical={6}
                   fontSize={12}
@@ -116,8 +116,8 @@ export default function HomeScreen() {
         <Wrapper>
           <Button
             title="open bet slip"
-            bgColor="#FFE100"
-            color="#53470C"
+            bgColor={theme.secondaryColor}
+            color={theme.secondaryDeepColor}
             fontSize={16}
             style={styles.buttonShadow}
             onPress={() => handleOpenModal()}

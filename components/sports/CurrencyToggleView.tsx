@@ -1,18 +1,22 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { StyleSheet } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 
 import { Wrapper } from "../Wrapper";
-import { LogoIcon } from "../icons";
 import { ThemedText } from "../ThemedText";
-import { CircleLogo, Switch } from "../ui";
+import { CurrencyView, Switch } from "../ui";
 import { DimensionValue } from "react-native";
+import { useBetSlipTheme } from "@/hooks/useBetSlipTheme";
+import { Themes } from "@/constants/Theme";
+import { useCurrencyExchange } from "@/hooks/useCurrencyExchange";
+import { currencyFormat } from "@/utils/functions";
 
 interface CurrencyToggleViewProps {
   width?: DimensionValue;
   height?: DimensionValue;
   fontSize?: number;
   paddingVertical?: number;
+  amount: number;
 }
 
 export const CurrencyToggleView = ({
@@ -20,24 +24,45 @@ export const CurrencyToggleView = ({
   height = 60,
   fontSize = 24,
   paddingVertical = 12,
+  amount = 0,
 }: CurrencyToggleViewProps) => {
+  const { theme, switchTheme } = useBetSlipTheme();
+  const { exchangeRate } = useCurrencyExchange();
+
   const [isStimiCurrency, toggleStimiCurrency] = useState(false);
+
+  useEffect(() => {
+    toggleStimiCurrency(theme.name === "cash");
+  }, [theme.name]);
+  console.log(isStimiCurrency, theme.name);
+
+  const handleToggleCurrency = (value: boolean) => {
+    switchTheme(value ? "cash" : "coin");
+    toggleStimiCurrency(value);
+  };
 
   return (
     <LinearGradient
-      colors={["#F02E9530", "#F02E9500"]}
+      colors={[theme.primaryGradientStartColor, theme.primaryGradientEndColor]}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 0 }}
       style={[styles.stimiCurrencyToggle, { width, paddingVertical }]}
     >
       <Wrapper style={styles.flexBar}>
-        <CircleLogo size={fontSize}>
-          <LogoIcon />
-        </CircleLogo>
+        <CurrencyView size={fontSize} currency={theme.name} />
         <ThemedText style={[styles.amountText, { fontSize }]}>
-          12,000,000
+          {currencyFormat(
+            amount,
+            theme.name,
+            useCurrencyExchange().exchangeRate
+          )}
         </ThemedText>
-        <Switch value={isStimiCurrency} onChange={toggleStimiCurrency} />
+        <Switch
+          value={isStimiCurrency}
+          onChange={(value) => handleToggleCurrency(value)}
+          inActiveColor={Themes.coin.primaryColor}
+          activeColor={Themes.cash.primaryColor}
+        />
       </Wrapper>
     </LinearGradient>
   );
@@ -55,21 +80,6 @@ const styles = StyleSheet.create({
     padding: 0,
     paddingHorizontal: 12,
     paddingVertical: 8,
-  },
-  logoBox: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: 50,
-    borderWidth: 3,
-    borderColor: "#BF2678",
-    backgroundColor: "#F02E95",
-    elevation: 10,
-    shadowColor: "#F02E9566",
-    shadowOffset: { width: 1, height: 2 },
-    shadowOpacity: 1,
-    shadowRadius: 0,
-    color: "white",
   },
   amountText: {
     flex: 1,

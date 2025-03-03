@@ -3,56 +3,47 @@ import { Pressable, StyleSheet } from "react-native";
 import Animated, {
   withSpring,
   useSharedValue,
+  useDerivedValue,
   interpolateColor,
 } from "react-native-reanimated";
 
 interface SwitchProps {
   onChange: (newValue: boolean) => void;
-  activeTrackColor?: string;
-  inActiveTrackColor?: string;
+  inActiveColor: string;
+  activeColor: string;
   thumbColor?: string;
   value: boolean;
 }
 
+const INACTIVE = 0;
+const ACTIVE = 21;
+
 export const Switch = ({
-  onChange,
-  activeTrackColor = "#F02E95",
-  inActiveTrackColor = "#F02E95",
-  thumbColor = "#FFF",
   value,
+  onChange,
+  inActiveColor,
+  activeColor,
+  thumbColor = "#FFF",
 }: SwitchProps) => {
-  const switchTranslate = useSharedValue(value ? 21 : 0);
-
-  useEffect(() => {
-    switchTranslate.value = withSpring(value ? 21 : 0, {
-      mass: 0.1,
-      damping: 25,
-      stiffness: 120,
-      overshootClamping: true,
-    });
-  }, [value]);
-
-  const backgroundColor = interpolateColor(
-    switchTranslate.value,
-    [0, 21],
-    [inActiveTrackColor, activeTrackColor]
-  );
-
-  const memoizedOnSwitchPressCallback = React.useCallback(() => {
-    onChange(!value);
-  }, [onChange, value]);
+  const handleSwitch = () => {
+    const newValue = !value;
+    onChange?.(newValue);
+  };
 
   return (
-    <Pressable onPress={memoizedOnSwitchPressCallback}>
+    <Pressable onPress={handleSwitch}>
       <Animated.View
-        style={[styles.containerStyle, { backgroundColor: backgroundColor }]}
+        style={[
+          styles.containerStyle,
+          { backgroundColor: !value ? inActiveColor : activeColor },
+        ]}
       >
         <Animated.View
           style={[
             styles.circleStyle,
             { backgroundColor: thumbColor },
             {
-              transform: [{ translateX: switchTranslate.value }],
+              transform: [{ translateX: !value ? INACTIVE : ACTIVE }],
             },
             styles.shadowValue,
           ]}
@@ -76,10 +67,7 @@ const styles = StyleSheet.create({
   },
   shadowValue: {
     shadowColor: "#000",
-    shadowOffset: {
-      width: 1,
-      height: 3,
-    },
+    shadowOffset: { width: 1, height: 3 },
     shadowOpacity: 0.33,
     shadowRadius: 2.62,
     elevation: 4,

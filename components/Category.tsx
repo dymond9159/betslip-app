@@ -32,7 +32,7 @@ export const Category = ({
           style={[styles.image, { width: size * 0.6, height: size * 0.6 }]}
         />
       </ThemedView>
-      <Text style={styles.text}>{title}</Text>
+      <Text style={styles.categoryText}>{title}</Text>
     </TouchableOpacity>
   );
 };
@@ -56,7 +56,7 @@ const styles = StyleSheet.create({
   image: {
     resizeMode: "contain",
   },
-  text: {
+  categoryText: {
     marginTop: 5,
     fontSize: 12,
     fontWeight: 400,

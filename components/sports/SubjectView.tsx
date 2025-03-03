@@ -15,7 +15,7 @@ export const SubjectView = ({ title, size = 4 }: SubjectViewProps) => {
       <ThemedView
         style={[styles.ul, { width: size, height: size, padding: size }]}
       ></ThemedView>
-      <ThemedText style={styles.text}>{title}</ThemedText>
+      <ThemedText style={styles.subjectText}>{title}</ThemedText>
     </FlexView>
   );
 };
@@ -27,7 +27,7 @@ const styles = StyleSheet.create({
     borderWidth: 5,
     borderColor: "#48191d",
   },
-  text: {
+  subjectText: {
     fontSize: 14,
     fontWeight: 700,
     lineHeight: 17,
